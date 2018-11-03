@@ -13,6 +13,9 @@ set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
 
 include_directories( ${CMAKE_SOURCE_DIR}/include )
 
-add_executable( Record src/main.cpp )
+add_executable( Record 
+    src/main.cpp
+    src/OpenNIHelper.cpp
+)
 
 target_link_libraries( Record ${OpenCV_LIBS} OpenNI2 )
