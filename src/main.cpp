@@ -8,6 +8,8 @@
 
 // STL Header
 #include <iostream>
+#include <thread>
+#include <string>
 
 // OpenCV Header
 #include <opencv2/core/core.hpp>
@@ -20,7 +22,12 @@
 // n1. NiTE Header
 #include "NiTE.h"
 
+// GTK Header
+#include <gtkmm.h>
+
 #include "kinectbvh.h"
+
+#define DEBUG true
 
 // namespace
 using namespace std;
@@ -116,8 +123,45 @@ void drawSkeleton(cv::Mat src, const cv::Point2f* aPoint, const SkeletonJoint* a
     }
 }
 
+Gtk::Window* ptr_window = NULL;
+Gtk::Image* ptr_image = NULL;
+Gtk::Button* ptr_button = NULL;
+bool recording = false;
+
+void button_onClicked()
+{
+    recording = !recording;
+    if (recording)
+    {
+        ptr_button->set_label("stop");
+    }
+    else
+    {
+        ptr_button->set_label("record");
+    }
+}
+
+void appGUI()
+{
+    auto app = Gtk::Application::create("org.gtkmm.example");
+    std::string gladeFilePath = "mainwindow.glade";
+    if (DEBUG) gladeFilePath = "../src/" + gladeFilePath;
+
+    Glib::RefPtr<Gtk::Builder> builder = Gtk::Builder::create_from_file(gladeFilePath);
+
+    builder->get_widget("mainWindow", ptr_window);
+    builder->get_widget("button", ptr_button);
+    builder->get_widget("image", ptr_image);
+    ptr_button->signal_clicked().connect(sigc::ptr_fun(button_onClicked));
+
+    //Shows the window and returns when it is closed.
+    app->run(*ptr_window);
+}
+
 int main( int argc, char **argv )
 {
+    std::thread appThread(appGUI);
+
     // read tilt angle from file
     float tile_angle = 0.0f;
     ifstream rf("tilt-angle.txt");
@@ -163,9 +207,6 @@ int main( int argc, char **argv )
     UserTracker mUserTracker;
     mUserTracker.create( &mDevice );
     mUserTracker.setSkeletonSmoothingFactor( 0.0f );
-    
-    // create OpenCV Window
-    cv::namedWindow( "User Image",  CV_WINDOW_AUTOSIZE );
     
     // p1. start
     mColorStream.start();
@@ -279,11 +320,12 @@ int main( int argc, char **argv )
         }
         
         // p5. show image
-        cv::imshow( "User Image", cImageBGR );
-        cv::imshow("depth", adjMap);
-        // p6. check keyboard
-        if( cv::waitKey( 1 ) == 27 )
-            break;
+        // cv::imshow( "User Image", cImageBGR );
+        // cv::imshow("depth", adjMap);
+
+        cv::cvtColor(cImageBGR, cImageBGR, CV_BGR2RGB);
+        Glib::RefPtr<Gdk::Pixbuf> pixbuf = Gdk::Pixbuf::create_from_data(cImageBGR.data, Gdk::COLORSPACE_RGB, false, 8, cImageBGR.cols, cImageBGR.rows, cImageBGR.step);
+        ptr_image->set(pixbuf);
     }
     
     if (IsRecording())
@@ -305,6 +347,8 @@ int main( int argc, char **argv )
     mDevice.close();
     NiTE::shutdown();
     OpenNI::shutdown();
+
+    appThread.join();
     
     return 0;
 }

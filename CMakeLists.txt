@@ -3,8 +3,12 @@ project( SkeletonRecord )
 
 set( CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/" ${CMAKE_MODULE_PATH} )
 
+
+FIND_PACKAGE(PkgConfig REQUIRED)
+PKG_CHECK_MODULES(GTKMM REQUIRED gtkmm-3.0)
 find_package( OpenCV REQUIRED )
 find_package( OpenNI2 REQUIRED )
+find_package( Threads )
 
 set(NITE2_INCLUDE_DIRS ~/NiTE-Linux-x64-2.2/Include )
 set(NITE2_LIBS ~/NiTE-Linux-x64-2.2/Redist/libNiTE2.so)
@@ -12,15 +16,17 @@ set(NITE2_LIBS ~/NiTE-Linux-x64-2.2/Redist/libNiTE2.so)
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 include_directories( ${OPENNI2_INCLUDE_DIRS} )
 include_directories( ${NITE2_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${GTKMM_INCLUDE_DIRS})
 
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
 
 include_directories( ${CMAKE_SOURCE_DIR}/include )
 
 add_executable( Record
+    #${CMAKE_CURRENT_SOURCE_DIRS}/src/main.cpp
     src/main.cpp
 )
 
-target_link_libraries( Record ${OpenCV_LIBS} OpenNI2 ${NITE2_LIBS} )
+target_link_libraries( Record ${OpenCV_LIBS} OpenNI2 ${NITE2_LIBS} ${GTKMM_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/data)
