@@ -89,6 +89,33 @@ void ProcessBonesOrientation(const nite::Skeleton &skel)
     m_pKinectBVH->IncrementNbFrames();
 }
 
+void drawSkeleton(cv::Mat src, const cv::Point2f* aPoint, const SkeletonJoint* aJoints)
+{
+    cv::line( src, aPoint[ 0], aPoint[ 1], cv::Scalar( 255, 0, 0 ), 3 );
+    cv::line( src, aPoint[ 1], aPoint[ 2], cv::Scalar( 255, 0, 0 ), 3 );
+    cv::line( src, aPoint[ 1], aPoint[ 3], cv::Scalar( 255, 0, 0 ), 3 );
+    cv::line( src, aPoint[ 2], aPoint[ 4], cv::Scalar( 255, 0, 0 ), 3 );
+    cv::line( src, aPoint[ 3], aPoint[ 5], cv::Scalar( 255, 0, 0 ), 3 );
+    cv::line( src, aPoint[ 4], aPoint[ 6], cv::Scalar( 255, 0, 0 ), 3 );
+    cv::line( src, aPoint[ 5], aPoint[ 7], cv::Scalar( 255, 0, 0 ), 3 );
+    cv::line( src, aPoint[ 1], aPoint[ 8], cv::Scalar( 255, 0, 0 ), 3 );
+    cv::line( src, aPoint[ 8], aPoint[ 9], cv::Scalar( 255, 0, 0 ), 3 );
+    cv::line( src, aPoint[ 8], aPoint[10], cv::Scalar( 255, 0, 0 ), 3 );
+    cv::line( src, aPoint[ 9], aPoint[11], cv::Scalar( 255, 0, 0 ), 3 );
+    cv::line( src, aPoint[10], aPoint[12], cv::Scalar( 255, 0, 0 ), 3 );
+    cv::line( src, aPoint[11], aPoint[13], cv::Scalar( 255, 0, 0 ), 3 );
+    cv::line( src, aPoint[12], aPoint[14], cv::Scalar( 255, 0, 0 ), 3 );
+    
+    // p4f. draw joint
+    for( int  s = 0; s < 15; ++ s )
+    {
+        if( aJoints[s].getPositionConfidence() > 0.5 )
+            cv::circle( src, aPoint[s], 3, cv::Scalar( 0, 0, 255 ), 2 );
+        else
+            cv::circle( src, aPoint[s], 3, cv::Scalar( 0, 255, 0 ), 2 );
+    }
+}
+
 int main( int argc, char **argv )
 {
     // read tilt angle from file
@@ -163,6 +190,11 @@ int main( int argc, char **argv )
         // p3. get user frame
         UserTrackerFrameRef  mUserFrame;
         mUserTracker.readFrame( &mUserFrame );
+        VideoFrameRef mDepthFrame = mUserFrame.getDepthFrame();
+        cv::Mat mImageDepth(mDepthFrame.getHeight(), mDepthFrame.getWidth(), CV_16UC1, (openni::DepthPixel*)mDepthFrame.getData());
+        cv::Mat adjMap;
+        convertScaleAbs(mImageDepth, adjMap, 255.0 / 6000);
+        cv::cvtColor(adjMap, adjMap, CV_GRAY2BGR);
         
         // p4. get users data
         const nite::Array<UserData>& aUsers = mUserFrame.getUsers();
@@ -234,29 +266,8 @@ int main( int argc, char **argv )
                     }
                     
                     // p4e. draw line
-                    cv::line( cImageBGR, aPoint[ 0], aPoint[ 1], cv::Scalar( 255, 0, 0 ), 3 );
-                    cv::line( cImageBGR, aPoint[ 1], aPoint[ 2], cv::Scalar( 255, 0, 0 ), 3 );
-                    cv::line( cImageBGR, aPoint[ 1], aPoint[ 3], cv::Scalar( 255, 0, 0 ), 3 );
-                    cv::line( cImageBGR, aPoint[ 2], aPoint[ 4], cv::Scalar( 255, 0, 0 ), 3 );
-                    cv::line( cImageBGR, aPoint[ 3], aPoint[ 5], cv::Scalar( 255, 0, 0 ), 3 );
-                    cv::line( cImageBGR, aPoint[ 4], aPoint[ 6], cv::Scalar( 255, 0, 0 ), 3 );
-                    cv::line( cImageBGR, aPoint[ 5], aPoint[ 7], cv::Scalar( 255, 0, 0 ), 3 );
-                    cv::line( cImageBGR, aPoint[ 1], aPoint[ 8], cv::Scalar( 255, 0, 0 ), 3 );
-                    cv::line( cImageBGR, aPoint[ 8], aPoint[ 9], cv::Scalar( 255, 0, 0 ), 3 );
-                    cv::line( cImageBGR, aPoint[ 8], aPoint[10], cv::Scalar( 255, 0, 0 ), 3 );
-                    cv::line( cImageBGR, aPoint[ 9], aPoint[11], cv::Scalar( 255, 0, 0 ), 3 );
-                    cv::line( cImageBGR, aPoint[10], aPoint[12], cv::Scalar( 255, 0, 0 ), 3 );
-                    cv::line( cImageBGR, aPoint[11], aPoint[13], cv::Scalar( 255, 0, 0 ), 3 );
-                    cv::line( cImageBGR, aPoint[12], aPoint[14], cv::Scalar( 255, 0, 0 ), 3 );
-                    
-                    // p4f. draw joint
-                    for( int  s = 0; s < 15; ++ s )
-                    {
-                        if( aJoints[s].getPositionConfidence() > 0.5 )
-                            cv::circle( cImageBGR, aPoint[s], 3, cv::Scalar( 0, 0, 255 ), 2 );
-                        else
-                            cv::circle( cImageBGR, aPoint[s], 3, cv::Scalar( 0, 255, 0 ), 2 );
-                    }
+                    drawSkeleton(cImageBGR, aPoint, aJoints);
+                    drawSkeleton(adjMap, aPoint, aJoints);
                 }
             } else {
                 if (rUser.getSkeleton().getState() == SKELETON_TRACKED && IsRecording())
@@ -269,6 +280,7 @@ int main( int argc, char **argv )
         
         // p5. show image
         cv::imshow( "User Image", cImageBGR );
+        cv::imshow("depth", adjMap);
         // p6. check keyboard
         if( cv::waitKey( 1 ) == 27 )
             break;
