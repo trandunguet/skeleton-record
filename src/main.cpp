@@ -226,7 +226,7 @@ int main( int argc, char **argv )
         const cv::Mat mImageRGB( mColorFrame.getHeight(), mColorFrame.getWidth(),
                                 CV_8UC3, (void*)mColorFrame.getData() );
         // p2c. convert form RGB to BGR
-        cv::cvtColor( mImageRGB, cImageBGR, CV_RGB2BGR );
+        cv::cvtColor( mImageRGB, cImageBGR, cv::COLOR_RGB2BGR );
         
         // p3. get user frame
         UserTrackerFrameRef  mUserFrame;
@@ -235,7 +235,7 @@ int main( int argc, char **argv )
         cv::Mat mImageDepth(mDepthFrame.getHeight(), mDepthFrame.getWidth(), CV_16UC1, (openni::DepthPixel*)mDepthFrame.getData());
         cv::Mat adjMap;
         convertScaleAbs(mImageDepth, adjMap, 255.0 / 6000);
-        cv::cvtColor(adjMap, adjMap, CV_GRAY2BGR);
+        cv::cvtColor(adjMap, adjMap, cv::COLOR_GRAY2BGR);
         
         // p4. get users data
         const nite::Array<UserData>& aUsers = mUserFrame.getUsers();
@@ -323,9 +323,10 @@ int main( int argc, char **argv )
         // cv::imshow( "User Image", cImageBGR );
         // cv::imshow("depth", adjMap);
 
-        cv::cvtColor(cImageBGR, cImageBGR, CV_BGR2RGB);
+        cv::cvtColor(cImageBGR, cImageBGR, cv::COLOR_BGR2RGB);
         Glib::RefPtr<Gdk::Pixbuf> pixbuf = Gdk::Pixbuf::create_from_data(cImageBGR.data, Gdk::COLORSPACE_RGB, false, 8, cImageBGR.cols, cImageBGR.rows, cImageBGR.step);
         ptr_image->set(pixbuf);
+        sleep(1);
     }
     
     if (IsRecording())
