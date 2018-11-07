@@ -164,9 +164,6 @@ int main( int argc, char **argv )
     mUserTracker.create( &mDevice );
     mUserTracker.setSkeletonSmoothingFactor( 0.0f );
     
-    // create OpenCV Window
-    cv::namedWindow( "User Image",  CV_WINDOW_AUTOSIZE );
-    
     // p1. start
     mColorStream.start();
     mDepthStream.start();
@@ -185,7 +182,7 @@ int main( int argc, char **argv )
         const cv::Mat mImageRGB( mColorFrame.getHeight(), mColorFrame.getWidth(),
                                 CV_8UC3, (void*)mColorFrame.getData() );
         // p2c. convert form RGB to BGR
-        cv::cvtColor( mImageRGB, cImageBGR, CV_RGB2BGR );
+        cv::cvtColor( mImageRGB, cImageBGR, cv::COLOR_RGB2BGR );
         
         // p3. get user frame
         UserTrackerFrameRef  mUserFrame;
@@ -194,7 +191,7 @@ int main( int argc, char **argv )
         cv::Mat mImageDepth(mDepthFrame.getHeight(), mDepthFrame.getWidth(), CV_16UC1, (openni::DepthPixel*)mDepthFrame.getData());
         cv::Mat adjMap;
         convertScaleAbs(mImageDepth, adjMap, 255.0 / 6000);
-        cv::cvtColor(adjMap, adjMap, CV_GRAY2BGR);
+        cv::cvtColor(adjMap, adjMap, cv::COLOR_GRAY2BGR);
         
         // p4. get users data
         const nite::Array<UserData>& aUsers = mUserFrame.getUsers();
