@@ -7,8 +7,6 @@
 void SkelRecorder::startRecording()
 {
     if (this->isRecording) return;
-
-    this->pKinectBVH = new KinectBVH();
     this->isRecording = true;
 }
 
