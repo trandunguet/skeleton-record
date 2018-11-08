@@ -13,6 +13,7 @@ void SkelRecorder::startRecording()
 void SkelRecorder::stopRecording()
 {
     if (!this->isRecording) return;
+    if (!this->isCalibrated) return;
 
     this->isRecording = false;
     time_t nowtime = time(NULL);
