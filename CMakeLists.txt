@@ -19,6 +19,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/include )
 
 add_executable( Record
     src/main.cpp
+    src/SkelRecorder.cpp
 )
 
 target_link_libraries( Record ${OpenCV_LIBS} OpenNI2 ${NITE2_LIBS} )
