@@ -240,7 +240,7 @@ SkelRecorder::~SkelRecorder()
 
     this->userTracker.destroy();
     this->colorStream.destroy();
-    this->depthStream.destroy();
+    this->userTracker.destroy();
     this->device.close();
     nite::NiTE::shutdown();
     openni::OpenNI::shutdown();
