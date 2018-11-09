@@ -1,26 +1,23 @@
-#include <opencv2/opencv.hpp>
 #include <iostream>
+#include <thread>
+
+#include <opencv2/opencv.hpp>
+#include <gtkmm.h>
+
 #include "SkelRecorder.h"
 
-SkelRecorder recorder;
-
-void onChange(int i, void*)
+void worker()
 {
-    if (i == 1) recorder.startRecording();
-    else if (i == 0) recorder.stopRecording();
+    SkelRecorder recorder;
+    recorder.init();
+    while (true);
 }
 
 int main()
 {
-    recorder.init();
-    int value = 0;
-    cv::Mat color, depth;
-    while(1)
-    {
-        recorder.getNextFrame(color, depth);
-        cv::imshow("color", color);
-        cv::imshow("depth", depth);
-        cv::createTrackbar("Status:\n1: Recording\n0: Stop", "color", &value, 1, onChange);
-        cv::waitKey(1);
-    }
+    auto app = Gtk::Application::create();
+    Glib::RefPtr<Gtk::Builder> builder = Gtk::Builder::create_from_file("../src/mainwindow.glade");
+    Gtk::Window* pWindow;
+    builder->get_widget("mainWindow", pWindow);
+    app->run(*pWindow);
 }
