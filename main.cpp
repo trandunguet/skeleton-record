@@ -13,6 +13,7 @@ private:
     void run() override
     {
         recorder.init();
+        w->setStatus("Ready");
         cv::Mat color, depth;
 
         forever
@@ -28,15 +29,18 @@ private:
 public slots:
     void button_onClicked()
     {
+        std::cout << "clicked" << std::endl;
         if (recorder.isRecording)
         {
             recorder.stopRecording();
             w->setButton("Record");
+            w->setStatus("Ready");
         }
         else
         {
             recorder.startRecording();
             w->setButton("Stop");
+            w->setStatus("Recording");
         }
     }
 };

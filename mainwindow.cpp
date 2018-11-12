@@ -27,3 +27,8 @@ QPushButton* MainWindow::getButton()
 {
     return this->ui->button;
 }
+
+void MainWindow::setStatus(QString string)
+{
+    this->ui->statusBar->showMessage(string);
+}

@@ -20,6 +20,7 @@ public:
 
     void setLabel(QPixmap& pixmap);
     void setButton(QString string);
+    void setStatus(QString string);
     QPushButton* getButton();
 
 private:
