@@ -29,7 +29,6 @@ private:
 public slots:
     void button_onClicked()
     {
-        std::cout << "clicked" << std::endl;
         if (recorder.isRecording)
         {
             recorder.stopRecording();
