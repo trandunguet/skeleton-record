@@ -13,9 +13,9 @@ void SkelRecorder::startRecording()
 void SkelRecorder::stopRecording()
 {
     if (!this->isRecording) return;
-    if (!this->isCalibrated) return;
-
     this->isRecording = false;
+
+    if (!this->isCalibrated) return;
     time_t nowtime = time(NULL);
     struct tm *local = localtime(&nowtime);
     char buf[256];
