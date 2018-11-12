@@ -17,3 +17,13 @@ void MainWindow::setLabel(QPixmap& pixmap)
 {
     this->ui->label->setPixmap(pixmap);
 }
+
+void MainWindow::setButton(QString string)
+{
+    this->ui->button->setText(string);
+}
+
+QPushButton* MainWindow::getButton()
+{
+    return this->ui->button;
+}

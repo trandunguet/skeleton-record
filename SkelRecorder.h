@@ -16,6 +16,7 @@ public:
     void init();
     void startRecording();
     void stopRecording();
+    bool isRecording;
     void getNextFrame(cv::Mat& matColorFrame, cv::Mat& matDepthFrame);
 
 private:
@@ -23,7 +24,6 @@ private:
     void processBonesOrientation(const nite::Skeleton &skel);
     void drawSkeleton(cv::Mat& src, const cv::Point2f* aPoint, const nite::SkeletonJoint* aJoints);
 
-    bool isRecording;
     bool isCalibrated;
     KinectBVH* pKinectBVH;
 

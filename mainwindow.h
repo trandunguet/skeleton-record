@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QLabel>
 #include <QThread>
+#include <QPushButton>
 
 namespace Ui {
 class MainWindow;
@@ -18,6 +19,8 @@ public:
     ~MainWindow();
 
     void setLabel(QPixmap& pixmap);
+    void setButton(QString string);
+    QPushButton* getButton();
 
 private:
     QThread thread;

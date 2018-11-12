@@ -8,11 +8,11 @@ MainWindow* w;
 class WorkerThread : public QThread
 {
     Q_OBJECT
+private:
+    SkelRecorder recorder;
     void run() override
     {
-        SkelRecorder recorder;
         recorder.init();
-
         cv::Mat color, depth;
 
         forever
@@ -22,6 +22,21 @@ class WorkerThread : public QThread
             recorder.getNextFrame(color, depth);
             QPixmap pixmap = QPixmap::fromImage(QImage((unsigned char*) color.data, color.cols, color.rows, QImage::Format_RGB888));
             w->setLabel(pixmap);
+        }
+    }
+
+public slots:
+    void button_onClicked()
+    {
+        if (recorder.isRecording)
+        {
+            recorder.stopRecording();
+            w->setButton("Record");
+        }
+        else
+        {
+            recorder.startRecording();
+            w->setButton("Stop");
         }
     }
 };
@@ -35,6 +50,8 @@ int main(int argc, char *argv[])
 
     WorkerThread worker;
     worker.start();
+
+    QObject::connect(w->getButton(), SIGNAL(clicked()), &worker, SLOT(button_onClicked()));
 
     return a.exec();
 }
