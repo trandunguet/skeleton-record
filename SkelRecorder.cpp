@@ -157,7 +157,6 @@ void SkelRecorder::getNextFrame(cv::Mat& matColorFrame, cv::Mat& matDepthFrame)
 
     convertScaleAbs(tmp, matDepthFrame, 255.0 / 6000);
     cv::cvtColor(matDepthFrame, matDepthFrame, cv::COLOR_GRAY2BGR);
-    matDepthFrame = matDepthFrame(cv::Rect(0, 0, DEVICE_WIDTH, DEVICE_HEIGHT));
 
     // p4. get users data
     const nite::Array<nite::UserData>& users = userFrame.getUsers();

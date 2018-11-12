@@ -18,7 +18,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void setLabel(QPixmap& pixmap);
+    void setLabels(QPixmap& pixmapColor, QPixmap& pixmapDepth);
     void setButton(QString string);
     void setStatus(QString string);
     QPushButton* getButton();

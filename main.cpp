@@ -21,8 +21,12 @@ private:
             if (!w) continue;
             
             recorder.getNextFrame(color, depth);
-            QPixmap pixmap = QPixmap::fromImage(QImage((unsigned char*) color.data, color.cols, color.rows, QImage::Format_RGB888));
-            w->setLabel(pixmap);
+
+            cv::cvtColor(color, color, CV_BGR2RGB);
+            cv::cvtColor(depth, depth, CV_BGR2RGB);
+            QPixmap pixmapColor = QPixmap::fromImage(QImage(color.data, color.cols, color.rows, QImage::Format_RGB888));
+            QPixmap pixmapDepth = QPixmap::fromImage(QImage(depth.data, depth.cols, depth.rows, QImage::Format_RGB888));
+            w->setLabels(pixmapColor, pixmapDepth);
         }
     }
 

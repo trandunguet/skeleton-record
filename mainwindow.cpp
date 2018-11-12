@@ -13,9 +13,10 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::setLabel(QPixmap& pixmap)
+void MainWindow::setLabels(QPixmap& pixmapColor, QPixmap& pixmapDepth)
 {
-    this->ui->label->setPixmap(pixmap);
+    this->ui->labelColor->setPixmap(pixmapColor);
+    this->ui->labelDepth->setPixmap(pixmapDepth);
 }
 
 void MainWindow::setButton(QString string)
